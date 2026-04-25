@@ -2,237 +2,190 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>房屋健康体检系统</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>屋掌柜房屋体检报告</title>
 
 <style>
+
 body{
-  font-family:-apple-system;
-  background:#f5f5f5;
   margin:0;
-  padding:10px;
+  font-family:"PingFang SC","Microsoft YaHei","Arial Rounded MT Bold",sans-serif;
+  background:#f4f5f7;
 }
 
+/* 顶部 */
+.header{
+  background:#111;
+  color:#fff;
+  text-align:center;
+  padding:18px;
+  font-size:20px;
+  font-weight:bold;
+}
+
+/* 卡片 */
 .card{
   background:#fff;
+  margin:10px;
+  padding:12px;
+  border-radius:12px;
+}
+
+/* 标题 */
+.section{
+  font-size:14px;
+  font-weight:bold;
   margin:10px 0;
-  padding:15px;
+}
+
+/* input */
+select{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+/* 按钮 */
+button{
+  width:90%;
+  margin:10px 5%;
+  padding:14px;
+  border:none;
   border-radius:10px;
+  background:#07c160;
+  color:#fff;
+  font-size:16px;
 }
 
-h3{
-  margin:10px 0;
-  font-size:15px;
-}
-
-label{
+/* 报告 */
+.report{
   font-size:13px;
 }
 
-select{
+table{
   width:100%;
+  border-collapse:collapse;
+}
+
+td,th{
+  border:1px solid #eee;
   padding:8px;
-  margin:5px 0 10px 0;
+  text-align:left;
 }
 
-button{
-  width:100%;
-  padding:12px;
-  background:#07c160;
-  color:#fff;
-  border:none;
-  border-radius:8px;
+th{
+  background:#f2f2f2;
 }
 
-.result{
-  font-size:18px;
-  font-weight:bold;
-  color:#07c160;
+/* 打印模式（关键） */
+@media print{
+  button{display:none;}
+  select{display:none;}
+  body{background:#fff;}
+  .card{box-shadow:none;}
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="card"><h2>🏠 房屋健康体检系统</h2></div>
+<div class="header">🏠 屋掌柜房屋体检报告系统</div>
 
-<!-- ① 饰面系统 -->
+<!-- ================= 输入 ================= -->
+
 <div class="card">
-<h3>① 饰面系统（15分）</h3>
+<div class="section">① 饰面系统</div>
 
-<label>天面</label>
+天面
 <select id="c1">
 <option value="5">无问题</option>
-<option value="3">轻微开裂</option>
+<option value="3">开裂</option>
 <option value="3">返潮</option>
 <option value="3">脱落</option>
-<option value="4">其他</option>
 </select>
 
-<label>地面</label>
+地面
 <select id="c2">
 <option value="5">无问题</option>
 <option value="3">起拱</option>
-<option value="3">返潮</option>
-<option value="3">划痕严重</option>
-<option value="4">其他</option>
+<option value="3">划痕</option>
 </select>
 
-<label>墙面</label>
+墙面
 <select id="c3">
 <option value="5">无问题</option>
 <option value="3">发霉</option>
 <option value="3">开裂</option>
-<option value="3">脱落</option>
-<option value="4">其他</option>
 </select>
 </div>
 
-<!-- ② 门窗材料 -->
+<!-- 门窗 -->
 <div class="card">
-<h3>② 门窗材料（20分）</h3>
+<div class="section">② 门窗材料</div>
 
-<label>门</label>
-<select id="d1">
-<option value="5">无问题</option>
-<option value="3">漏风</option>
-<option value="3">变形</option>
-<option value="3">隔音差</option>
-</select>
-
-<label>窗</label>
-<select id="d2">
-<option value="5">无问题</option>
-<option value="3">漏风</option>
-<option value="3">渗水</option>
-<option value="3">隔音差</option>
-</select>
-
-<label>环保材料</label>
-<select id="d3">
-<option value="10">ENF级（最高）</option>
-<option value="7">大部分环保</option>
-<option value="4">部分环保</option>
-<option value="1">不清楚</option>
-</select>
+门
+<select id="d1"><option value="5">无问题</option><option value="3">漏风</option></select>
+窗
+<select id="d2"><option value="5">无问题</option><option value="3">渗水</option></select>
+环保材料
+<select id="d3"><option value="10">ENF级</option><option value="7">较好</option><option value="4">一般</option></select>
 </div>
 
-<!-- ③ 通风系统 -->
+<!-- 通风 -->
 <div class="card">
-<h3>③ 通风系统（15分）</h3>
+<div class="section">③ 通风系统</div>
 
-<label>客厅</label>
-<select id="v1">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">无窗</option>
-</select>
-
-<label>厨房</label>
-<select id="v2">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">无窗</option>
-</select>
-
-<label>卫生间</label>
-<select id="v3">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">无窗</option>
-</select>
-
-<label>主卧</label>
-<select id="v4">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">无窗</option>
-</select>
-
-<label>次卧</label>
-<select id="v5">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">无窗</option>
-</select>
+客厅<select id="v1"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+厨房<select id="v2"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+卫生间<select id="v3"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+主卧<select id="v4"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+次卧<select id="v5"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
 </div>
 
-<!-- ④ 光照系统 -->
+<!-- 光照 -->
 <div class="card">
-<h3>④ 光照系统（15分）</h3>
+<div class="section">④ 光照系统</div>
 
-<label>客厅</label>
-<select id="l1">
-<option value="5">优（南向/通透）</option>
-<option value="3">良（东南/东）</option>
-<option value="2">差（西向）</option>
-<option value="0">北向/遮挡</option>
-</select>
-
-<label>厨房</label>
-<select id="l2">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">北向</option>
-</select>
-
-<label>卫生间</label>
-<select id="l3">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">无自然光</option>
-</select>
-
-<label>主卧</label>
-<select id="l4">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">北向</option>
-</select>
-
-<label>次卧</label>
-<select id="l5">
-<option value="5">优</option>
-<option value="3">良</option>
-<option value="2">差</option>
-<option value="0">北向</option>
-</select>
+客厅<select id="l1"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+厨房<select id="l2"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+卫生间<select id="l3"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+主卧<select id="l4"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
+次卧<select id="l5"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
 </div>
 
-<!-- ⑤ 痛点 -->
+<!-- 痛点 -->
 <div class="card">
-<h3>⑤ 居住痛点（扣分）</h3>
+<div class="section">⑤ 居住痛点（扣分）</div>
 
-<label><input type="checkbox" class="p" value="3">湿度问题</label><br>
-<label><input type="checkbox" class="p" value="3">空气问题</label><br>
-<label><input type="checkbox" class="p" value="3">噪音</label><br>
-<label><input type="checkbox" class="p" value="3">灰尘</label><br>
-<label><input type="checkbox" class="p" value="3">能耗高</label><br>
+<label><input type="checkbox" class="p" value="3">潮湿</label>
+<label><input type="checkbox" class="p" value="3">空气差</label>
+<label><input type="checkbox" class="p" value="3">噪音</label>
+<label><input type="checkbox" class="p" value="3">灰尘</label>
+<label><input type="checkbox" class="p" value="3">能耗高</label>
 <label><input type="checkbox" class="p" value="3">其他</label>
 </div>
 
-<!-- ⑥ 加分 -->
+<!-- 加分 -->
 <div class="card">
-<h3>⑥ 加分系统</h3>
+<div class="section">⑥ 加分系统</div>
 
-<label><input type="checkbox" class="b" value="3">新风系统</label><br>
-<label><input type="checkbox" class="b" value="3">净水系统</label><br>
-<label><input type="checkbox" class="b" value="3">门窗升级</label><br>
+<label><input type="checkbox" class="b" value="3">新风系统</label>
+<label><input type="checkbox" class="b" value="3">净水系统</label>
+<label><input type="checkbox" class="b" value="3">门窗升级</label>
 <label><input type="checkbox" class="b" value="3">智能家居</label>
+
 </div>
 
-<button onclick="calc()">生成体检报告</button>
+<button onclick="calc()">生成报告</button>
+<button onclick="window.print()">打印 / 导出PDF</button>
 
-<div class="card">
-<div id="out"></div>
-</div>
+<!-- ================= 报告 ================= -->
+
+<div class="card report" id="report"></div>
 
 <script>
 
@@ -240,52 +193,61 @@ function sum(id){
 return parseInt(document.getElementById(id).value);
 }
 
+function getText(id){
+let el=document.getElementById(id);
+return el.options[el.selectedIndex].text;
+}
+
 function calc(){
 
-// 饰面
 let surface = sum("c1")+sum("c2")+sum("c3");
-
-// 门窗
 let door = sum("d1")+sum("d2")+sum("d3");
 
-// 通风
 let v = (sum("v1")+sum("v2")+sum("v3")+sum("v4")+sum("v5"))/25*15;
-
-// 光照
 let l = (sum("l1")+sum("l2")+sum("l3")+sum("l4")+sum("l5"))/25*15;
 
-// 痛点
-let pain = 0;
+/* 痛点 */
+let pain=0;
 document.querySelectorAll(".p:checked").forEach(i=>pain+=+i.value);
 
-// 加分
-let bonus = 0;
+/* 加分 */
+let bonus=0;
 document.querySelectorAll(".b:checked").forEach(i=>bonus+=+i.value);
 if(bonus>10) bonus=10;
 
-// 总分
+/* 总分 */
 let total = surface + door + v + l + 35 - pain + bonus;
 if(total>100) total=100;
 
-// 等级
-let level="";
-let advice="";
+/* 等级 */
+let level = total>=90?"健康宜居":total>=75?"亚健康":"需深度改造";
 
-if(total>=90){
-level="健康宜居";
-advice="基础维护即可";
-}else if(total>=75){
-level="亚健康";
-advice="建议升级新风/恒温系统";
-}else{
-level="需深度改造";
-advice="建议整体被动式健康整装";
-}
+/* ===== 报告（表格输出） ===== */
 
-document.getElementById("out").innerHTML=
-"评分："+total.toFixed(1)+"<br>"+
-"等级："+level+"<br>"+
-"建议："+advice;
+document.getElementById("report").innerHTML = `
+<h3>📋 体检结果报告</h3>
+
+<table>
+<tr><th>项目</th><th>结果</th></tr>
+
+<tr><td>天面</td><td>${getText("c1")}</td></tr>
+<tr><td>地面</td><td>${getText("c2")}</td></tr>
+<tr><td>墙面</td><td>${getText("c3")}</td></tr>
+
+<tr><td>门窗</td><td>${getText("d1")} / ${getText("d2")}</td></tr>
+<tr><td>环保材料</td><td>${getText("d3")}</td></tr>
+
+<tr><td>通风</td><td>已评估</td></tr>
+<tr><td>光照</td><td>已评估</td></tr>
+
+<tr><td>痛点扣分</td><td>-${pain}</td></tr>
+<tr><td>加分</td><td>+${bonus}</td></tr>
+
+<tr><td><b>总分</b></td><td><b>${total.toFixed(1)}</b></td></tr>
+<tr><td>等级</td><td>${level}</td></tr>
+
+</table>
+`;
 
 }
 

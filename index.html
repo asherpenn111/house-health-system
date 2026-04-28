@@ -4,14 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>屋掌柜房屋体检报告</title>
+<title>屋掌柜HOME MASTER房屋体检报告</title>
 
 <style>
 
 body{
   margin:0;
   font-family:"PingFang SC","Microsoft YaHei","Arial Rounded MT Bold",sans-serif;
+  background:#50200A;
+  display:flex;
+  justify-content:center;
+}
+
+/* 主容器 */
+.wrapper{
+  width:75vw;
+  max-width:1100px;
   background:#f4f5f7;
+  min-height:100vh;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);
+  overflow:hidden;
 }
 
 /* 顶部 */
@@ -27,9 +40,15 @@ body{
 /* 卡片 */
 .card{
   background:#fff;
-  margin:10px;
-  padding:12px;
-  border-radius:12px;
+  margin:12px;
+  padding:14px;
+  border-radius:14px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+  transition:0.2s;
+}
+
+.card:hover{
+  transform:translateY(-2px);
 }
 
 /* 标题 */
@@ -58,6 +77,7 @@ button{
   background:#07c160;
   color:#fff;
   font-size:16px;
+  cursor:pointer;
 }
 
 /* 报告 */
@@ -80,23 +100,24 @@ th{
   background:#f2f2f2;
 }
 
-/* 打印模式（关键） */
+/* 打印优化 */
 @media print{
   button{display:none;}
   select{display:none;}
   body{background:#fff;}
   .card{box-shadow:none;}
+  .wrapper{width:100%;}
 }
 
 </style>
 </head>
 
 <body>
+<div class="wrapper">
 
-<div class="header">🏠 屋掌柜房屋体检报告系统</div>
+<div class="header">🏠 屋掌柜HOME MASTER房屋体检报告系统</div>
 
-<!-- ================= 输入 ================= -->
-
+<!-- 饰面 -->
 <div class="card">
 <div class="section">① 饰面系统</div>
 
@@ -128,11 +149,23 @@ th{
 <div class="section">② 门窗材料</div>
 
 门
-<select id="d1"><option value="5">无问题</option><option value="3">漏风</option></select>
+<select id="d1">
+<option value="5">无问题</option>
+<option value="3">漏风</option>
+</select>
+
 窗
-<select id="d2"><option value="5">无问题</option><option value="3">渗水</option></select>
+<select id="d2">
+<option value="5">无问题</option>
+<option value="3">渗水</option>
+</select>
+
 环保材料
-<select id="d3"><option value="10">ENF级</option><option value="7">较好</option><option value="4">一般</option></select>
+<select id="d3">
+<option value="10">ENF级</option>
+<option value="7">较好</option>
+<option value="4">一般</option>
+</select>
 </div>
 
 <!-- 通风 -->
@@ -161,41 +194,39 @@ th{
 <div class="card">
 <div class="section">⑤ 居住痛点（扣分）</div>
 
-<label><input type="checkbox" class="p" value="3">潮湿</label>
-<label><input type="checkbox" class="p" value="3">空气差</label>
-<label><input type="checkbox" class="p" value="3">噪音</label>
-<label><input type="checkbox" class="p" value="3">灰尘</label>
-<label><input type="checkbox" class="p" value="3">能耗高</label>
-<label><input type="checkbox" class="p" value="3">其他</label>
+<label><input type="checkbox" class="p" value="3"> 潮湿</label>
+<label><input type="checkbox" class="p" value="3"> 空气差</label>
+<label><input type="checkbox" class="p" value="3"> 噪音</label>
+<label><input type="checkbox" class="p" value="3"> 灰尘</label>
+<label><input type="checkbox" class="p" value="3"> 能耗高</label>
+<label><input type="checkbox" class="p" value="3"> 其他</label>
 </div>
 
 <!-- 加分 -->
 <div class="card">
 <div class="section">⑥ 加分系统</div>
 
-<label><input type="checkbox" class="b" value="3">新风系统</label>
-<label><input type="checkbox" class="b" value="3">净水系统</label>
-<label><input type="checkbox" class="b" value="3">门窗升级</label>
-<label><input type="checkbox" class="b" value="3">智能家居</label>
-
+<label><input type="checkbox" class="b" value="3"> 新风系统</label>
+<label><input type="checkbox" class="b" value="3"> 净水系统</label>
+<label><input type="checkbox" class="b" value="3"> 门窗升级</label>
+<label><input type="checkbox" class="b" value="3"> 智能家居</label>
 </div>
 
 <button onclick="calc()">生成报告</button>
 <button onclick="window.print()">打印 / 导出PDF</button>
 
-<!-- ================= 报告 ================= -->
-
+<!-- 报告 -->
 <div class="card report" id="report"></div>
 
 <script>
 
 function sum(id){
-return parseInt(document.getElementById(id).value);
+  return parseInt(document.getElementById(id).value);
 }
 
 function getText(id){
-let el=document.getElementById(id);
-return el.options[el.selectedIndex].text;
+  let el=document.getElementById(id);
+  return el.options[el.selectedIndex].text;
 }
 
 function calc(){
@@ -206,52 +237,35 @@ let door = sum("d1")+sum("d2")+sum("d3");
 let v = (sum("v1")+sum("v2")+sum("v3")+sum("v4")+sum("v5"))/25*15;
 let l = (sum("l1")+sum("l2")+sum("l3")+sum("l4")+sum("l5"))/25*15;
 
-/* 痛点 */
 let pain=0;
 document.querySelectorAll(".p:checked").forEach(i=>pain+=+i.value);
 
-/* 加分 */
 let bonus=0;
 document.querySelectorAll(".b:checked").forEach(i=>bonus+=+i.value);
 if(bonus>10) bonus=10;
 
-/* 总分 */
 let total = surface + door + v + l + 35 - pain + bonus;
 if(total>100) total=100;
 
-/* 等级 */
-let level = total>=90?"健康宜居":total>=75?"亚健康":"需深度改造";
+let level = total>=90?"✅ 健康宜居":total>=75?"⚠️ 亚健康":"❌ 需深度改造";
 
-/* ===== 报告（表格输出） ===== */
+let advice = total>=90?"仅需基础维护，居住体验良好"
+: total>=75?"建议升级环境系统（新风/恒温恒湿）"
+: "强烈建议进行自然环境整装";
 
 document.getElementById("report").innerHTML = `
-<h3>📋 体检结果报告</h3>
-
+<h3>📋 HOME MASTER房屋体检结果报告</h3>
 <table>
 <tr><th>项目</th><th>结果</th></tr>
-
-<tr><td>天面</td><td>${getText("c1")}</td></tr>
-<tr><td>地面</td><td>${getText("c2")}</td></tr>
-<tr><td>墙面</td><td>${getText("c3")}</td></tr>
-
-<tr><td>门窗</td><td>${getText("d1")} / ${getText("d2")}</td></tr>
-<tr><td>环保材料</td><td>${getText("d3")}</td></tr>
-
-<tr><td>通风</td><td>已评估</td></tr>
-<tr><td>光照</td><td>已评估</td></tr>
-
-<tr><td>痛点扣分</td><td>-${pain}</td></tr>
-<tr><td>加分</td><td>+${bonus}</td></tr>
-
-<tr><td><b>总分</b></td><td><b>${total.toFixed(1)}</b></td></tr>
+<tr><td>总分</td><td>${total.toFixed(1)}</td></tr>
 <tr><td>等级</td><td>${level}</td></tr>
-
+<tr><td>建议</td><td>${advice}</td></tr>
 </table>
 `;
-
 }
 
 </script>
 
+</div>
 </body>
 </html>

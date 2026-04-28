@@ -1,271 +1,456 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>屋掌柜HOME MASTER房屋体检报告</title>
-
-<style>
-
-body{
-  margin:0;
-  font-family:"PingFang SC","Microsoft YaHei","Arial Rounded MT Bold",sans-serif;
-  background:#50200A;
-  display:flex;
-  justify-content:center;
-}
-
-/* 主容器 */
-.wrapper{
-  width:75vw;
-  max-width:1100px;
-  background:#f4f5f7;
-  min-height:100vh;
-  border-radius:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.25);
-  overflow:hidden;
-}
-
-/* 顶部 */
-.header{
-  background:#111;
-  color:#fff;
-  text-align:center;
-  padding:18px;
-  font-size:20px;
-  font-weight:bold;
-}
-
-/* 卡片 */
-.card{
-  background:#fff;
-  margin:12px;
-  padding:14px;
-  border-radius:14px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.06);
-  transition:0.2s;
-}
-
-.card:hover{
-  transform:translateY(-2px);
-}
-
-/* 标题 */
-.section{
-  font-size:14px;
-  font-weight:bold;
-  margin:10px 0;
-}
-
-/* input */
-select{
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border-radius:8px;
-  border:1px solid #ddd;
-}
-
-/* 按钮 */
-button{
-  width:90%;
-  margin:10px 5%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  background:#07c160;
-  color:#fff;
-  font-size:16px;
-  cursor:pointer;
-}
-
-/* 报告 */
-.report{
-  font-size:13px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-td,th{
-  border:1px solid #eee;
-  padding:8px;
-  text-align:left;
-}
-
-th{
-  background:#f2f2f2;
-}
-
-/* 打印优化 */
-@media print{
-  button{display:none;}
-  select{display:none;}
-  body{background:#fff;}
-  .card{box-shadow:none;}
-  .wrapper{width:100%;}
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>屋掌柜 HOME MASTER 房屋体检报告系统</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "PingFang SC", "Microsoft YaHei", "Arial Rounded MT Bold", sans-serif;
+            background: #50200A;
+            display: flex;
+            justify-content: center;
+        }
+        .wrapper {
+            width: 85vw;
+            max-width: 1100px;
+            background: #f4f5f7;
+            min-height: 100vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+        .header {
+            background: #50200A;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .card {
+            background: #fff;
+            margin: 16px 12px;
+            padding: 16px;
+            border-radius: 14px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            border-left: 5px solid #07c160;
+            padding-left: 10px;
+        }
+        .sub-title {
+            font-weight: bold;
+            margin: 10px 0 6px;
+            color: #333;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 4px 0 4px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        input[type="checkbox"],
+        input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #07c160;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 4px 0 8px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        .inline-select {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 6px 0 6px 10px;
+            flex-wrap: wrap;
+            font-size: 14px;
+        }
+        .inline-select span {
+            min-width: 60px;
+        }
+        .inline-select select {
+            flex: 1;
+            min-width: 120px;
+        }
+        button {
+            display: block;
+            width: 80%;
+            margin: 12px auto;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #07c160;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #06ad56;
+        }
+        @media print {
+            button {
+                display: none;
+            }
+            body {
+                background: #fff;
+            }
+            .card {
+                box-shadow: none;
+                margin: 8px 0;
+                break-inside: avoid;
+            }
+            .wrapper {
+                width: 100%;
+                box-shadow: none;
+            }
+        }
+    </style>
 </head>
-
 <body>
-<div class="wrapper">
+    <div class="wrapper">
+        <div class="header">🏠 屋掌柜 HOME MASTER 房屋体检报告系统</div>
 
-<div class="header">🏠 屋掌柜HOME MASTER房屋体检报告系统</div>
+        <!-- 一、全屋饰面现状 15分 -->
+        <div class="card">
+            <div class="section-title">① 全屋饰面现状（15分）</div>
 
-<!-- 饰面 -->
-<div class="card">
-<div class="section">① 饰面系统</div>
+            <div class="sub-title">天面饰面（5分）</div>
+            <div id="surface-ceiling" class="issue-group">
+                <label><input type="checkbox" class="no-problem" checked> 无问题</label>
+                <label><input type="checkbox" class="issue" value="2"> 开裂</label>
+                <label><input type="checkbox" class="issue" value="2"> 返潮</label>
+                <label><input type="checkbox" class="issue" value="2"> 脱落</label>
+                <label><input type="checkbox" class="issue" value="1"> 其他（请注明）</label>
+            </div>
 
-天面
-<select id="c1">
-<option value="5">无问题</option>
-<option value="3">开裂</option>
-<option value="3">返潮</option>
-<option value="3">脱落</option>
-</select>
+            <div class="sub-title">地面饰面（5分）</div>
+            <div id="surface-floor" class="issue-group">
+                <label><input type="checkbox" class="no-problem" checked> 无问题</label>
+                <label><input type="checkbox" class="issue" value="2"> 起拱</label>
+                <label><input type="checkbox" class="issue" value="2"> 返潮</label>
+                <label><input type="checkbox" class="issue" value="2"> 划痕严重</label>
+                <label><input type="checkbox" class="issue" value="1"> 其他（请注明）</label>
+            </div>
 
-地面
-<select id="c2">
-<option value="5">无问题</option>
-<option value="3">起拱</option>
-<option value="3">划痕</option>
-</select>
+            <div class="sub-title">墙面饰面（5分）</div>
+            <div id="surface-wall" class="issue-group">
+                <label><input type="checkbox" class="no-problem" checked> 无问题</label>
+                <label><input type="checkbox" class="issue" value="2"> 发霉</label>
+                <label><input type="checkbox" class="issue" value="2"> 开裂</label>
+                <label><input type="checkbox" class="issue" value="2"> 脱落</label>
+                <label><input type="checkbox" class="issue" value="2"> 涂画严重</label>
+                <label><input type="checkbox" class="issue" value="1"> 其他（请注明）</label>
+            </div>
+        </div>
 
-墙面
-<select id="c3">
-<option value="5">无问题</option>
-<option value="3">发霉</option>
-<option value="3">开裂</option>
-</select>
-</div>
+        <!-- 二、门窗、材料现状 20分 -->
+        <div class="card">
+            <div class="section-title">② 门窗、材料现状（20分）</div>
 
-<!-- 门窗 -->
-<div class="card">
-<div class="section">② 门窗材料</div>
+            <div class="sub-title">门与门框（5分）</div>
+            <div id="door-group" class="issue-group">
+                <label><input type="checkbox" class="no-problem" checked> 无问题</label>
+                <label><input type="checkbox" class="issue" value="2"> 漏风</label>
+                <label><input type="checkbox" class="issue" value="2"> 变形</label>
+                <label><input type="checkbox" class="issue" value="2"> 隔音差</label>
+                <label><input type="checkbox" class="issue" value="1"> 其他（请注明）</label>
+            </div>
 
-门
-<select id="d1">
-<option value="5">无问题</option>
-<option value="3">漏风</option>
-</select>
+            <div class="sub-title">窗与窗框（5分）</div>
+            <div id="window-group" class="issue-group">
+                <label><input type="checkbox" class="no-problem" checked> 无问题</label>
+                <label><input type="checkbox" class="issue" value="2"> 漏风</label>
+                <label><input type="checkbox" class="issue" value="2"> 渗水</label>
+                <label><input type="checkbox" class="issue" value="2"> 隔音差</label>
+                <label><input type="checkbox" class="issue" value="1"> 其他（请注明）</label>
+            </div>
 
-窗
-<select id="d2">
-<option value="5">无问题</option>
-<option value="3">渗水</option>
-</select>
+            <div class="sub-title">环保材料使用（10分）</div>
+            <select id="eco-material">
+                <option value="10">全部ENF级环保材料</option>
+                <option value="7">大部分为环保材料</option>
+                <option value="4">仅主材为环保材料</option>
+                <option value="1">少量环保材料</option>
+                <option value="3">不清楚</option>
+            </select>
+        </div>
 
-环保材料
-<select id="d3">
-<option value="10">ENF级</option>
-<option value="7">较好</option>
-<option value="4">一般</option>
-</select>
-</div>
+        <!-- 三、通风情况 15分 -->
+        <div class="card">
+            <div class="section-title">③ 通风情况（15分）</div>
+            <div class="inline-select"><span>客厅</span><select id="vent-living"><option value="5">优</option><option value="3">良</option><option value="2">差</option><option value="0">无窗、无排气</option></select></div>
+            <div class="inline-select"><span>厨房</span><select id="vent-kitchen"><option value="5">优</option><option value="3">良</option><option value="2">差</option><option value="0">无窗、无排气</option></select></div>
+            <div class="inline-select"><span>洗手间</span><select id="vent-bath"><option value="5">优</option><option value="3">良</option><option value="2">差</option><option value="0">无窗、无排气</option></select></div>
+            <div class="inline-select"><span>主卧</span><select id="vent-main"><option value="5">优</option><option value="3">良</option><option value="2">差</option><option value="0">无窗、无排气</option></select></div>
+            <div class="inline-select"><span>次卧</span><select id="vent-second"><option value="5">优</option><option value="3">良</option><option value="2">差</option><option value="0">无窗、无排气</option></select></div>
+        </div>
 
-<!-- 通风 -->
-<div class="card">
-<div class="section">③ 通风系统</div>
+        <!-- 四、光照情况 15分 -->
+        <div class="card">
+            <div class="section-title">④ 光照情况（15分）</div>
+            <div class="inline-select"><span>客厅</span><select id="light-living"><option value="5">优/南北对流/南向</option><option value="3">良/东向/东南向</option><option value="2">差/西向</option><option value="0">北向/有遮挡</option></select></div>
+            <div class="inline-select"><span>厨房</span><select id="light-kitchen"><option value="5">优/南北对流/南向</option><option value="3">良/东向/东南向</option><option value="2">差/西向</option><option value="0">北向/有遮挡</option></select></div>
+            <div class="inline-select"><span>洗手间</span><select id="light-bath"><option value="5">优/南北对流/南向</option><option value="3">良/东向/东南向</option><option value="2">差/西向</option><option value="0">北向/有遮挡</option></select></div>
+            <div class="inline-select"><span>主卧</span><select id="light-main"><option value="5">优/南北对流/南向</option><option value="3">良/东向/东南向</option><option value="2">差/西向</option><option value="0">北向/有遮挡</option></select></div>
+            <div class="inline-select"><span>次卧</span><select id="light-second"><option value="5">优/南北对流/南向</option><option value="3">良/东向/东南向</option><option value="2">差/西向</option><option value="0">北向/有遮挡</option></select></div>
+        </div>
 
-客厅<select id="v1"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-厨房<select id="v2"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-卫生间<select id="v3"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-主卧<select id="v4"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-次卧<select id="v5"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-</div>
+        <!-- 五、居住习惯与痛点 35分 -->
+        <div class="card">
+            <div class="section-title">⑤ 居住习惯与痛点（35分）<span style="font-weight:normal; font-size:13px;">（勾选即扣分）</span></div>
+            <div id="pain-points">
+                <label><input type="checkbox" class="pain" value="3"> 回南天潮湿</label>
+                <label><input type="checkbox" class="pain" value="3"> 暴晒</label>
+                <label><input type="checkbox" class="pain" value="3"> 墙体龟裂/漏水/发霉</label>
+                <label><input type="checkbox" class="pain" value="3"> 空气浑浊/异味重</label>
+                <label><input type="checkbox" class="pain" value="3"> 通风不足</label>
+                <label><input type="checkbox" class="pain" value="3"> 噪音干扰大</label>
+                <label><input type="checkbox" class="pain" value="3"> 水质差</label>
+                <label><input type="checkbox" class="pain" value="3"> 光线、照明不足、氛围感差</label>
+                <label><input type="checkbox" class="pain" value="3"> 能耗高、费用高</label>
+                <label><input type="checkbox" class="pain" value="3"> 网络速度慢</label>
+                <label><input type="checkbox" class="pain" value="3"> 储物空间少</label>
+                <label><input type="checkbox" class="pain" value="3"> 厨卫反味、地漏异味</label>
+                <label><input type="checkbox" class="pain" value="3"> 灰尘多</label>
+                <label><input type="checkbox" class="pain" value="3"> 蚊虫多</label>
+                <label><input type="checkbox" class="pain" value="3"> 其他（请注明）</label>
+            </div>
+        </div>
 
-<!-- 光照 -->
-<div class="card">
-<div class="section">④ 光照系统</div>
+        <!-- 六、额外加分项 10分 -->
+        <div class="card">
+            <div class="section-title">⑥ 额外加分项（最多加至10分）</div>
+            <div id="bonus-points">
+                <label><input type="checkbox" class="bonus" value="3"> 已有全屋新风系统</label>
+                <label><input type="checkbox" class="bonus" value="3"> 已有净水系统</label>
+                <label><input type="checkbox" class="bonus" value="3"> 已有隔音/保温门窗</label>
+                <label><input type="checkbox" class="bonus" value="3"> 已有智能家居设备</label>
+                <label><input type="checkbox" class="bonus" value="1"> 其他（请注明）</label>
+            </div>
+        </div>
 
-客厅<select id="l1"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-厨房<select id="l2"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-卫生间<select id="l3"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-主卧<select id="l4"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-次卧<select id="l5"><option value="5">优</option><option value="3">良</option><option value="2">差</option></select>
-</div>
+        <button onclick="generateReport()">📋 生成体检报告</button>
+        <button onclick="window.print()">🖨️ 打印 / 导出PDF（当前页）</button>
 
-<!-- 痛点 -->
-<div class="card">
-<div class="section">⑤ 居住痛点（扣分）</div>
+        <div class="card report" id="report" style="display:none;"></div>
+    </div>
 
-<label><input type="checkbox" class="p" value="3"> 潮湿</label>
-<label><input type="checkbox" class="p" value="3"> 空气差</label>
-<label><input type="checkbox" class="p" value="3"> 噪音</label>
-<label><input type="checkbox" class="p" value="3"> 灰尘</label>
-<label><input type="checkbox" class="p" value="3"> 能耗高</label>
-<label><input type="checkbox" class="p" value="3"> 其他</label>
-</div>
+    <script>
+        function initIssueGroups() {
+            document.querySelectorAll('.issue-group').forEach(group => {
+                const noProb = group.querySelector('.no-problem');
+                const issues = group.querySelectorAll('.issue');
 
-<!-- 加分 -->
-<div class="card">
-<div class="section">⑥ 加分系统</div>
+                if (noProb) noProb.checked = true;
 
-<label><input type="checkbox" class="b" value="3"> 新风系统</label>
-<label><input type="checkbox" class="b" value="3"> 净水系统</label>
-<label><input type="checkbox" class="b" value="3"> 门窗升级</label>
-<label><input type="checkbox" class="b" value="3"> 智能家居</label>
-</div>
+                if (noProb) {
+                    noProb.addEventListener('change', function() {
+                        if (this.checked) {
+                            issues.forEach(iss => iss.checked = false);
+                        }
+                    });
+                }
 
-<button onclick="calc()">生成报告</button>
-<button onclick="window.print()">打印 / 导出PDF</button>
+                issues.forEach(iss => {
+                    iss.addEventListener('change', function() {
+                        if (this.checked && noProb) {
+                            noProb.checked = false;
+                        }
+                        const anyChecked = Array.from(issues).some(i => i.checked);
+                        if (!anyChecked && noProb) {
+                            noProb.checked = true;
+                        }
+                    });
+                });
+            });
+        }
 
-<!-- 报告 -->
-<div class="card report" id="report"></div>
+        function calcGroupScore(groupId) {
+            const group = document.getElementById(groupId);
+            if (!group) return 0;
+            const noProb = group.querySelector('.no-problem');
+            if (noProb && noProb.checked) return 5;
+            let deduction = 0;
+            group.querySelectorAll('.issue:checked').forEach(cb => {
+                deduction += parseInt(cb.value) || 0;
+            });
+            return Math.max(0, 5 - deduction);
+        }
 
-<script>
+        function styleScore(score) {
+            return score < 0 ? ' style="color:red; font-weight:bold;"' : '';
+        }
 
-function sum(id){
-  return parseInt(document.getElementById(id).value);
-}
+        function generateReport() {
+            const ceiling = calcGroupScore('surface-ceiling');
+            const floor = calcGroupScore('surface-floor');
+            const wall = calcGroupScore('surface-wall');
+            const surfaceTotal = ceiling + floor + wall;
 
-function getText(id){
-  let el=document.getElementById(id);
-  return el.options[el.selectedIndex].text;
-}
+            const doorScore = calcGroupScore('door-group');
+            const windowScore = calcGroupScore('window-group');
+            const eco = parseInt(document.getElementById('eco-material').value);
+            const doorWinTotal = doorScore + windowScore + eco;
 
-function calc(){
+            const ventLiving = parseInt(document.getElementById('vent-living').value);
+            const ventKitchen = parseInt(document.getElementById('vent-kitchen').value);
+            const ventBath = parseInt(document.getElementById('vent-bath').value);
+            const ventMain = parseInt(document.getElementById('vent-main').value);
+            const ventSecond = parseInt(document.getElementById('vent-second').value);
+            const ventRawSum = ventLiving + ventKitchen + ventBath + ventMain + ventSecond;
+            const ventTotal = (ventRawSum / 25) * 15;
 
-let surface = sum("c1")+sum("c2")+sum("c3");
-let door = sum("d1")+sum("d2")+sum("d3");
+            const lightLiving = parseInt(document.getElementById('light-living').value);
+            const lightKitchen = parseInt(document.getElementById('light-kitchen').value);
+            const lightBath = parseInt(document.getElementById('light-bath').value);
+            const lightMain = parseInt(document.getElementById('light-main').value);
+            const lightSecond = parseInt(document.getElementById('light-second').value);
+            const lightRawSum = lightLiving + lightKitchen + lightBath + lightMain + lightSecond;
+            const lightTotal = (lightRawSum / 25) * 15;
 
-let v = (sum("v1")+sum("v2")+sum("v3")+sum("v4")+sum("v5"))/25*15;
-let l = (sum("l1")+sum("l2")+sum("l3")+sum("l4")+sum("l5"))/25*15;
+            let painDeduction = 0;
+            document.querySelectorAll('.pain:checked').forEach(cb => {
+                painDeduction += parseInt(cb.value);
+            });
+            const painTotal = Math.max(0, 35 - painDeduction);
 
-let pain=0;
-document.querySelectorAll(".p:checked").forEach(i=>pain+=+i.value);
+            let bonus = 0;
+            document.querySelectorAll('.bonus:checked').forEach(cb => {
+                bonus += parseInt(cb.value);
+            });
+            bonus = Math.min(bonus, 10);
 
-let bonus=0;
-document.querySelectorAll(".b:checked").forEach(i=>bonus+=+i.value);
-if(bonus>10) bonus=10;
+            let total = surfaceTotal + doorWinTotal + ventTotal + lightTotal + painTotal + bonus;
+            total = Math.min(total, 110);
 
-let total = surface + door + v + l + 35 - pain + bonus;
-if(total>100) total=100;
+            let levelText, levelClass, advice;
+            if (total >= 90) {
+                levelText = '✅ 健康宜居';
+                levelClass = 'level-healthy';
+                advice = '仅需基础维护，居住体验良好。';
+            } else if (total >= 75) {
+                levelText = '⚠️ 亚健康';
+                levelClass = 'level-warning';
+                advice = '建议进行环境系统升级（新风/恒温恒湿）。';
+            } else {
+                levelText = '❌ 需深度改造';
+                levelClass = 'level-danger';
+                advice = '强烈建议进行自然环境整装，打造宜居壳体。';
+            }
 
-let level = total>=90?"✅ 健康宜居":total>=75?"⚠️ 亚健康":"❌ 需深度改造";
+            const reportHTML = `
+            <html lang="zh">
+            <head>
+                <meta charset="UTF-8">
+                <title>房屋体检报告</title>
+                <style>
+                    body {
+                        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+                        margin: 0;
+                        padding: 30px;
+                        background: #f4f5f7;
+                    }
+                    .report-container {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        background: white;
+                        padding: 30px;
+                        border-radius: 16px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                    }
+                    h3 { margin-top: 0; }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin: 20px 0;
+                    }
+                    th, td {
+                        border: 1px solid #ddd;
+                        padding: 10px 12px;
+                        text-align: left;
+                    }
+                    th {
+                        background: #f9f9f9;
+                        font-weight: bold;
+                    }
+                    .score-negative {
+                        color: red;
+                        font-weight: bold;
+                    }
+                    .level-healthy { color: #07c160; font-weight: bold; }
+                    .level-warning { color: #f0ad4e; font-weight: bold; }
+                    .level-danger { color: #d9534f; font-weight: bold; }
+                    .advice-text { font-weight: bold; }
+                    button {
+                        display: block;
+                        margin: 20px auto 0;
+                        padding: 12px 30px;
+                        background: #07c160;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        cursor: pointer;
+                    }
+                    button:hover { background: #06ad56; }
+                    @media print {
+                        button { display: none; }
+                        body { background: white; }
+                        .report-container { box-shadow: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="report-container">
+                    <h3>📋 HOME MASTER 房屋体检结果报告</h3>
+                    <table>
+                        <tr><th>模块</th><th>得分</th></tr>
+                        <tr><td>一、全屋饰面现状</td><td${styleScore(surfaceTotal)}>${surfaceTotal.toFixed(1)}</td></tr>
+                        <tr><td>　天面</td><td${styleScore(ceiling)}>${ceiling}</td></tr>
+                        <tr><td>　地面</td><td${styleScore(floor)}>${floor}</td></tr>
+                        <tr><td>　墙面</td><td${styleScore(wall)}>${wall}</td></tr>
+                        <tr><td>二、门窗、材料现状</td><td${styleScore(doorWinTotal)}>${doorWinTotal.toFixed(1)}</td></tr>
+                        <tr><td>　门与门框</td><td${styleScore(doorScore)}>${doorScore}</td></tr>
+                        <tr><td>　窗与窗框</td><td${styleScore(windowScore)}>${windowScore}</td></tr>
+                        <tr><td>　环保材料</td><td${styleScore(eco)}>${eco}</td></tr>
+                        <tr><td>三、通风情况</td><td${styleScore(ventTotal)}>${ventTotal.toFixed(1)}</td></tr>
+                        <tr><td>四、光照情况</td><td${styleScore(lightTotal)}>${lightTotal.toFixed(1)}</td></tr>
+                        <tr><td>五、居住习惯与痛点</td><td${styleScore(painTotal)}>${painTotal}</td></tr>
+                        <tr><td>六、额外加分项</td><td>+${bonus}</td></tr>
+                        <tr style="font-weight:bold; background:#f0f0f0;"><td>总分</td><td${styleScore(total)}>${total.toFixed(1)}</td></tr>
+                        <tr><td>健康等级</td><td class="${levelClass}">${levelText}</td></tr>
+                        <tr><td>建议</td><td class="advice-text">${advice}</td></tr>
+                    </table>
+                    <p style="margin-top:15px; color:#666; font-size:13px;">* 报告基于《房屋健康体检报告》评分逻辑生成，满分110分。</p>
+                    <button onclick="window.print()">🖨️ 打印报告</button>
+                </div>
+            </body>
+            </html>
+            `;
 
-let advice = total>=90?"仅需基础维护，居住体验良好"
-: total>=75?"建议升级环境系统（新风/恒温恒湿）"
-: "强烈建议进行自然环境整装";
+            const reportWindow = window.open('', '体检报告', 'width=900,height=700');
+            reportWindow.document.write(reportHTML);
+            reportWindow.document.close();
+            reportWindow.focus();
+        }
 
-document.getElementById("report").innerHTML = `
-<h3>📋 HOME MASTER房屋体检结果报告</h3>
-<table>
-<tr><th>项目</th><th>结果</th></tr>
-<tr><td>总分</td><td>${total.toFixed(1)}</td></tr>
-<tr><td>等级</td><td>${level}</td></tr>
-<tr><td>建议</td><td>${advice}</td></tr>
-</table>
-`;
-}
-
-</script>
-
-</div>
+        window.addEventListener('DOMContentLoaded', initIssueGroups);
+    </script>
 </body>
 </html>

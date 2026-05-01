@@ -5,6 +5,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>屋掌柜 HOME MASTER 房屋体检报告系统</title>
     <style>
+        <!-- 添加一个浮动按钮 -->
+<button id="openFormBtn" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #007bff; color: white; border: none; border-radius: 50px; padding: 12px 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">➕ 登记客户</button>
+
+<!-- 自定义弹窗表单 -->
+<div id="recordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+  <div style="background: white; width: 90%; max-width: 500px; max-height: 80%; overflow-y: auto; border-radius: 10px; padding: 20px;">
+    <h3>客户信息登记</h3>
+    <form id="recordForm">
+      <!-- 基础字段 -->
+      <label>员工姓名：</label><input type="text" id="employee_name" required><br><br>
+      <label>客户姓名：</label><input type="text" id="customer_name" required><br><br>
+      <label>手机号码：</label><input type="tel" id="customer_phone" required><br><br>
+      <label>房屋地址：</label><textarea id="address" rows="2" required></textarea><br><br>
+      
+      <label>使用的系统：</label>
+      <select id="system_used">
+        <option value="房屋健康系统">房屋健康系统</option>
+        <option value="定价系统">定价系统</option>
+        <option value="产品系统">产品系统</option>
+        <option value="Home-Master">Home-Master</option>
+      </select><br><br>
+      
+      <!-- 根据系统动态显示的字段区域（初始隐藏） -->
+      <div id="dynamicFields"></div>
+      
+      <label>客户意向等级：</label>
+      <select id="intent_level">
+        <option value="高">高</option>
+        <option value="中">中</option>
+        <option value="低">低</option>
+        <option value="已签约">已签约</option>
+      </select><br><br>
+      
+      <label>跟进备注：</label><textarea id="remark" rows="2"></textarea><br><br>
+      
+      <label>跟进状态：</label>
+      <select id="followup_status">
+        <option value="待跟进">待跟进</option>
+        <option value="已报价">已报价</option>
+        <option value="已签约">已签约</option>
+        <option value="已放弃">已放弃</option>
+      </select><br><br>
+      
+      <button type="submit">提交</button>
+      <button type="button" id="closeModalBtn">取消</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// 获取页面弹窗元素
+const modal = document.getElementById('recordModal');
+const openBtn = document.getElementById('openFormBtn');
+const closeBtn = document.getElementById('closeModalBtn');
+const form = document.getElementById('recordForm');
+const systemSelect = document.getElementById('system_used');
+const dynamicFieldsDiv = document.getElementById('dynamicFields');
+
+// 打开弹窗
+openBtn.onclick = () => { modal.style.display = 'flex'; };
+closeBtn.onclick = () => { modal.style.display = 'none'; };
+// 点击背景关闭弹窗
+window.onclick = (event) => { if (event.target === modal) modal.style.display = 'none'; };
+
+// 根据选择的系统动态显示不同的字段
+function updateDynamicFields() {
+  const system = systemSelect.value;
+  let html = '';
+  if (system === '房屋健康系统') {
+    html = `
+      <label>房屋健康评分/等级：</label><input type="text" id="house_health_score"><br><br>
+      <label>健康检测关键指标：</label><textarea id="health_indicators" rows="2"></textarea><br><br>
+    `;
+  } else if (system === '定价系统') {
+    html = `
+      <label>报价方案编号/名称：</label><input type="text" id="quotation_name"><br><br>
+      <label>报价总金额（元）：</label><input type="number" id="quotation_amount"><br><br>
+    `;
+  } else if (system === '产品系统') {
+    html = `
+      <label>所选产品清单：</label><textarea id="product_list" rows="2"></textarea><br><br>
+      <label>产品总金额（元）：</label><input type="number" id="product_amount"><br><br>
+    `;
+  } else if (system === 'Home-Master') {
+    html = `
+      <label>Home-Master 汇总结论：</label><textarea id="home_master_summary" rows="2"></textarea><br><br>
+    `;
+  }
+  dynamicFieldsDiv.innerHTML = html;
+}
+systemSelect.addEventListener('change', updateDynamicFields);
+updateDynamicFields(); // 初始化
+
+// 提交表单
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  
+  // 收集所有字段值
+  const payload = {
+    employee_name: document.getElementById('employee_name').value,
+    customer_name: document.getElementById('customer_name').value,
+    customer_phone: document.getElementById('customer_phone').value,
+    address: document.getElementById('address').value,
+    system_used: systemSelect.value,
+    house_health_score: document.getElementById('house_health_score')?.value || '',
+    health_indicators: document.getElementById('health_indicators')?.value || '',
+    quotation_name: document.getElementById('quotation_name')?.value || '',
+    quotation_amount: document.getElementById('quotation_amount')?.value || '',
+    product_list: document.getElementById('product_list')?.value || '',
+    product_amount: document.getElementById('product_amount')?.value || '',
+    home_master_summary: document.getElementById('home_master_summary')?.value || '',
+    intent_level: document.getElementById('intent_level').value,
+    remark: document.getElementById('remark').value,
+    followup_status: document.getElementById('followup_status').value
+  };
+  
+  // 发送到 Google Web App
+  const webAppUrl = 'https://script.google.com/macros/s/AKfycbwRVqyDk3lDsgDSL5ispG5K0Q9bgDMtRC5NqWcs6TjMnLOD_-QQxmNjqKyQzP8STwnj/exec'; // 替换成你自己的网址
+  try {
+    const response = await fetch(webAppUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(payload)
+    });
+    const result = await response.json();
+    if (result.result === 'success') {
+      alert('登记成功！');
+      modal.style.display = 'none';
+      form.reset(); // 清空表单
+    } else {
+      alert('登记失败，请稍后重试。');
+    }
+  } catch (err) {
+    alert('网络错误，请检查网络后重试。');
+  }
+};
+</script>
         body {
             margin: 0;
             font-family: "PingFang SC", "Microsoft YaHei", "Arial Rounded MT Bold", sans-serif;

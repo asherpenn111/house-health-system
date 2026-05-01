@@ -579,30 +579,56 @@
         });
     </script>
 
-    <!-- ========== 客户登记/更新模块 (浮动按钮 + 弹窗) ========== -->
-<button id="openFormBtn" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #007bff; color: white; border: none; border-radius: 50px; padding: 12px 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-weight: bold;">📋 登记/更新客户</button>
+  <!-- ========== 客户登记/更新模块 (浮动按钮 + 弹窗) ========== -->
+<style>
+  /* 强行重置按钮样式，避免被子系统页面CSS污染 */
+  #openFormBtnFix {
+    all: initial !important;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 9999 !important;
+    background-color: #007bff !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50px !important;
+    padding: 12px 20px !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+    font-weight: bold !important;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    width: auto !important;
+    height: auto !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+  }
+</style>
 
-<div id="recordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+<button id="openFormBtnFix">📋 登记/更新客户</button>
+
+<div id="recordModalFix" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
   <div style="background: white; width: 90%; max-width: 500px; max-height: 80%; overflow-y: auto; border-radius: 10px; padding: 20px; color: #333;">
     <h3>客户信息登记/更新</h3>
-    <form id="recordForm">
-      <label>员工姓名：</label><input type="text" id="employee_name" required><br><br>
-      <label>客户姓名：</label><input type="text" id="customer_name" required><br><br>
-      <label>📱 客户手机号（唯一标识）：</label><input type="tel" id="customer_phone" required><br><br>
-      <label>房屋地址：</label><textarea id="address" rows="2" required></textarea><br><br>
+    <form id="recordFormFix">
+      <label>员工姓名：</label><input type="text" id="employee_name_fix" required><br><br>
+      <label>客户姓名：</label><input type="text" id="customer_name_fix" required><br><br>
+      <label>📱 客户手机号（唯一标识）：</label><input type="tel" id="customer_phone_fix" required><br><br>
+      <label>房屋地址：</label><textarea id="address_fix" rows="2" required></textarea><br><br>
       
       <label>使用的系统：</label>
-      <select id="system_used">
+      <select id="system_used_fix">
         <option value="房屋健康系统">房屋健康系统</option>
         <option value="定价系统">定价系统</option>
         <option value="产品系统">产品系统</option>
         <option value="Home-Master">Home-Master</option>
       </select><br><br>
       
-      <div id="dynamicFields"></div>
+      <div id="dynamicFieldsFix"></div>
       
       <label>客户意向等级：</label>
-      <select id="intent_level">
+      <select id="intent_level_fix">
         <option value="">-- 不更新 --</option>
         <option value="高">高</option>
         <option value="中">中</option>
@@ -610,10 +636,10 @@
         <option value="已签约">已签约</option>
       </select><br><br>
       
-      <label>跟进备注：</label><textarea id="remark" rows="2"></textarea><br><br>
+      <label>跟进备注：</label><textarea id="remark_fix" rows="2"></textarea><br><br>
       
       <label>跟进状态：</label>
-      <select id="followup_status">
+      <select id="followup_status_fix">
         <option value="">-- 不更新 --</option>
         <option value="待跟进">待跟进</option>
         <option value="已报价">已报价</option>
@@ -622,20 +648,19 @@
       </select><br><br>
       
       <button type="submit">提交</button>
-      <button type="button" id="closeModalBtn">取消</button>
+      <button type="button" id="closeModalBtnFix">取消</button>
     </form>
   </div>
 </div>
 
 <script>
-// 确保 DOM 加载完成后再绑定事件
 (function() {
-  const modal = document.getElementById('recordModal');
-  const openBtn = document.getElementById('openFormBtn');
-  const closeBtn = document.getElementById('closeModalBtn');
-  const form = document.getElementById('recordForm');
-  const systemSelect = document.getElementById('system_used');
-  const dynamicFieldsDiv = document.getElementById('dynamicFields');
+  const modal = document.getElementById('recordModalFix');
+  const openBtn = document.getElementById('openFormBtnFix');
+  const closeBtn = document.getElementById('closeModalBtnFix');
+  const form = document.getElementById('recordFormFix');
+  const systemSelect = document.getElementById('system_used_fix');
+  const dynamicFieldsDiv = document.getElementById('dynamicFieldsFix');
 
   if (!openBtn || !modal) return;
 
@@ -648,22 +673,22 @@
     let html = '';
     if (system === '房屋健康系统') {
       html = `
-        <label>房屋健康评分/等级：</label><input type="text" id="house_health_score"><br><br>
-        <label>健康检测关键指标：</label><textarea id="health_indicators" rows="2"></textarea><br><br>
+        <label>房屋健康评分/等级：</label><input type="text" id="house_health_score_fix"><br><br>
+        <label>健康检测关键指标：</label><textarea id="health_indicators_fix" rows="2"></textarea><br><br>
       `;
     } else if (system === '定价系统') {
       html = `
-        <label>报价方案编号/名称：</label><input type="text" id="quotation_name"><br><br>
-        <label>报价总金额（元）：</label><input type="number" id="quotation_amount"><br><br>
+        <label>报价方案编号/名称：</label><input type="text" id="quotation_name_fix"><br><br>
+        <label>报价总金额（元）：</label><input type="number" id="quotation_amount_fix"><br><br>
       `;
     } else if (system === '产品系统') {
       html = `
-        <label>所选产品清单：</label><textarea id="product_list" rows="2"></textarea><br><br>
-        <label>产品总金额（元）：</label><input type="number" id="product_amount"><br><br>
+        <label>所选产品清单：</label><textarea id="product_list_fix" rows="2"></textarea><br><br>
+        <label>产品总金额（元）：</label><input type="number" id="product_amount_fix"><br><br>
       `;
     } else if (system === 'Home-Master') {
       html = `
-        <label>Home-Master 汇总结论：</label><textarea id="home_master_summary" rows="2"></textarea><br><br>
+        <label>Home-Master 汇总结论：</label><textarea id="home_master_summary_fix" rows="2"></textarea><br><br>
       `;
     }
     dynamicFieldsDiv.innerHTML = html;
@@ -675,24 +700,24 @@
     e.preventDefault();
     
     const payload = {
-      employee_name: document.getElementById('employee_name').value,
-      customer_name: document.getElementById('customer_name').value,
-      customer_phone: document.getElementById('customer_phone').value,
-      address: document.getElementById('address').value,
+      employee_name: document.getElementById('employee_name_fix').value,
+      customer_name: document.getElementById('customer_name_fix').value,
+      customer_phone: document.getElementById('customer_phone_fix').value,
+      address: document.getElementById('address_fix').value,
       system_used: systemSelect.value,
-      house_health_score: document.getElementById('house_health_score')?.value || '',
-      health_indicators: document.getElementById('health_indicators')?.value || '',
-      quotation_name: document.getElementById('quotation_name')?.value || '',
-      quotation_amount: document.getElementById('quotation_amount')?.value || '',
-      product_list: document.getElementById('product_list')?.value || '',
-      product_amount: document.getElementById('product_amount')?.value || '',
-      home_master_summary: document.getElementById('home_master_summary')?.value || '',
-      intent_level: document.getElementById('intent_level').value,
-      remark: document.getElementById('remark').value,
-      followup_status: document.getElementById('followup_status').value
+      house_health_score: document.getElementById('house_health_score_fix')?.value || '',
+      health_indicators: document.getElementById('health_indicators_fix')?.value || '',
+      quotation_name: document.getElementById('quotation_name_fix')?.value || '',
+      quotation_amount: document.getElementById('quotation_amount_fix')?.value || '',
+      product_list: document.getElementById('product_list_fix')?.value || '',
+      product_amount: document.getElementById('product_amount_fix')?.value || '',
+      home_master_summary: document.getElementById('home_master_summary_fix')?.value || '',
+      intent_level: document.getElementById('intent_level_fix').value,
+      remark: document.getElementById('remark_fix').value,
+      followup_status: document.getElementById('followup_status_fix').value
     };
     
-    // ⚠️ 重要：将下面的 URL 替换成你自己部署的 Google Apps Script Web App 地址
+    // 请替换成你自己的 Google Apps Script URL
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbwyRgdHugsLqcBDNXjaQvQKAdDq2wugPTUuTav1_75Crb2jJK-NGg6aHcOTGFUKFRwo/exec';
     
     try {

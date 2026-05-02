@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>屋掌柜 HOME MASTER 房屋体检报告系统</title>
     <style>
         body {
@@ -99,6 +99,23 @@
             flex: 1;
             min-width: 120px;
         }
+        .info-row {
+            margin-bottom: 14px;
+        }
+        .field-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .field-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
         button {
             display: block;
             width: 80%;
@@ -151,6 +168,23 @@
         <div class="header">
             <div class="header-line1">🏠 屋掌柜 HOME MASTER</div>
             <div class="header-line2">房屋健康体检报告系统</div>
+        </div>
+
+        <!-- 客戶資訊卡片（新增） -->
+        <div class="card">
+            <div class="section-title">📋 客戶資訊</div>
+            <div class="info-row">
+                <div class="field-label">客戶姓名</div>
+                <input type="text" id="custName" class="field-input" placeholder="請輸入客戶姓名">
+            </div>
+            <div class="info-row">
+                <div class="field-label">手機號碼</div>
+                <input type="tel" id="custPhone" class="field-input" placeholder="請輸入手機號碼">
+            </div>
+            <div class="info-row">
+                <div class="field-label">房屋地址</div>
+                <input type="text" id="custAddr" class="field-input" placeholder="請輸入房屋地址">
+            </div>
         </div>
 
         <!-- 一、全屋饰面现状 -->
@@ -338,8 +372,8 @@
             return score < 0 ? ' style="color:red; font-weight:bold;"' : '';
         }
 
-        // 生成报告新窗口
-        function generateReport() {
+        // 获取扣分制各分项及总分的函数（用于登记）
+        function getHealthScores() {
             const ceiling = calcGroupScore('surface-ceiling');
             const floor = calcGroupScore('surface-floor');
             const wall = calcGroupScore('surface-wall');
@@ -376,19 +410,57 @@
 
             let total = surfaceTotal + doorWinTotal + ventTotal + lightTotal + painTotal + bonus;
             total = Math.min(total, 110);
+            total = Math.round(total * 10) / 10;
 
-            let levelText, levelClass, advice;
+            let levelText = '';
+            if (total >= 90) levelText = '健康宜居';
+            else if (total >= 75) levelText = '亚健康';
+            else levelText = '需深度改造';
+
+            return { total, levelText, surfaceTotal, doorWinTotal, ventTotal, lightTotal, painTotal, bonus };
+        }
+
+        // 生成报告新窗口（保留原有功能，内部调用 getHealthScores 避免重复代码）
+        function generateReport() {
+            const scores = getHealthScores();
+            const total = scores.total;
+            const ceiling = calcGroupScore('surface-ceiling');
+            const floor = calcGroupScore('surface-floor');
+            const wall = calcGroupScore('surface-wall');
+            const doorScore = calcGroupScore('door-group');
+            const windowScore = calcGroupScore('window-group');
+            const eco = parseInt(document.getElementById('eco-material').value);
+            const ventLiving = parseInt(document.getElementById('vent-living').value);
+            const ventKitchen = parseInt(document.getElementById('vent-kitchen').value);
+            const ventBath = parseInt(document.getElementById('vent-bath').value);
+            const ventMain = parseInt(document.getElementById('vent-main').value);
+            const ventSecond = parseInt(document.getElementById('vent-second').value);
+            const ventRawSum = ventLiving + ventKitchen + ventBath + ventMain + ventSecond;
+            const ventTotal = (ventRawSum / 25) * 15;
+            const lightLiving = parseInt(document.getElementById('light-living').value);
+            const lightKitchen = parseInt(document.getElementById('light-kitchen').value);
+            const lightBath = parseInt(document.getElementById('light-bath').value);
+            const lightMain = parseInt(document.getElementById('light-main').value);
+            const lightSecond = parseInt(document.getElementById('light-second').value);
+            const lightRawSum = lightLiving + lightKitchen + lightBath + lightMain + lightSecond;
+            const lightTotal = (lightRawSum / 25) * 15;
+            let painDeduction = 0;
+            document.querySelectorAll('.pain:checked').forEach(cb => painDeduction += parseInt(cb.value));
+            const painTotal = Math.max(0, 35 - painDeduction);
+            let bonus = 0;
+            document.querySelectorAll('.bonus:checked').forEach(cb => bonus += parseInt(cb.value));
+            bonus = Math.min(bonus, 10);
+
+            let levelText = '';
+            let advice = '';
             if (total >= 90) {
                 levelText = '✅ 健康宜居';
-                levelClass = 'level-healthy';
                 advice = '仅需基础维护，居住体验良好。';
             } else if (total >= 75) {
                 levelText = '⚠️ 亚健康';
-                levelClass = 'level-warning';
                 advice = '建议进行环境系统升级（新风/恒温恒湿）。';
             } else {
                 levelText = '❌ 需深度改造';
-                levelClass = 'level-danger';
                 advice = '强烈建议进行自然环境整装，打造宜居壳体。';
             }
 
@@ -535,20 +607,20 @@
                     </h2>
                     <table>
                         <tr><th>模块</th><th>得分</th></tr>
-                        <tr><td>一、全屋饰面现状</td><td${styleScore(surfaceTotal)}>${surfaceTotal.toFixed(1)}</td></tr>
+                        <tr><td>一、全屋饰面现状</td><td${styleScore(scores.surfaceTotal)}>${scores.surfaceTotal.toFixed(1)}</td></tr>
                         <tr><td>　天面</td><td${styleScore(ceiling)}>${ceiling}</td></tr>
                         <tr><td>　地面</td><td${styleScore(floor)}>${floor}</td></tr>
                         <tr><td>　墙面</td><td${styleScore(wall)}>${wall}</td></tr>
-                        <tr><td>二、门窗、材料现状</td><td${styleScore(doorWinTotal)}>${doorWinTotal.toFixed(1)}</td></tr>
+                        <tr><td>二、门窗、材料现状</td><td${styleScore(scores.doorWinTotal)}>${scores.doorWinTotal.toFixed(1)}</td></tr>
                         <tr><td>　门与门框</td><td${styleScore(doorScore)}>${doorScore}</td></tr>
                         <tr><td>　窗与窗框</td><td${styleScore(windowScore)}>${windowScore}</td></tr>
                         <tr><td>　环保材料</td><td${styleScore(eco)}>${eco}</td></tr>
-                        <tr><td>三、通风情况</td><td${styleScore(ventTotal)}>${ventTotal.toFixed(1)}</td></tr>
-                        <tr><td>四、光照情况</td><td${styleScore(lightTotal)}>${lightTotal.toFixed(1)}</td></tr>
-                        <tr><td>五、居住习惯与痛点</td><td${styleScore(painTotal)}>${painTotal}</td></tr>
-                        <tr><td>六、额外加分项</td><td>+${bonus}</td></tr>
+                        <tr><td>三、通风情况</td><td${styleScore(scores.ventTotal)}>${scores.ventTotal.toFixed(1)}</td></tr>
+                        <tr><td>四、光照情况</td><td${styleScore(scores.lightTotal)}>${scores.lightTotal.toFixed(1)}</td></tr>
+                        <tr><td>五、居住习惯与痛点</td><td${styleScore(scores.painTotal)}>${scores.painTotal}</td></tr>
+                        <tr><td>六、额外加分项</td><td>+${scores.bonus}</td></tr>
                         <tr style="font-weight:bold; background:#f0f0f0;"><td>总分</td><td${styleScore(total)}>${total.toFixed(1)}</td></tr>
-                        <tr><td>健康等级</td><td class="${levelClass}">${levelText}</td></tr>
+                        <tr><td>健康等级</td><td class="${total>=90?'level-healthy':total>=75?'level-warning':'level-danger'}">${levelText}</td></tr>
                         <tr><td>建议</td><td class="advice-text">${advice}</td></tr>
                     </table>
                     <div class="footer-note">
@@ -579,170 +651,205 @@
         });
     </script>
 
-  <!-- ========== 客户登记/更新模块 (浮动按钮 + 弹窗) ========== -->
-<style>
-  /* 强行重置按钮样式，避免被子系统页面CSS污染 */
-  #openFormBtnFix {
-    all: initial !important;
-    position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    z-index: 9999 !important;
-    background-color: #007bff !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50px !important;
-    padding: 12px 20px !important;
-    cursor: pointer !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
-    font-weight: bold !important;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
-    font-size: 16px !important;
-    line-height: 1 !important;
-    width: auto !important;
-    height: auto !important;
-    letter-spacing: normal !important;
-    text-transform: none !important;
-  }
-</style>
+    <!-- ========== 客户登记/更新模块 (适配房屋健康系统，自动填充) ========== -->
+    <style>
+        #openFormBtnFix {
+            all: initial !important;
+            position: fixed !important;
+            bottom: 20px !important;
+            right: 20px !important;
+            z-index: 9999 !important;
+            background-color: #007bff !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 50px !important;
+            padding: 12px 20px !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+            font-weight: bold !important;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
+            font-size: 16px !important;
+            line-height: 1 !important;
+            width: auto !important;
+            height: auto !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+        }
+    </style>
 
-<button id="openFormBtnFix">📋 登记/更新客户</button>
+    <button id="openFormBtnFix">📋 登记/更新客户</button>
 
-<div id="recordModalFix" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
-  <div style="background: white; width: 90%; max-width: 500px; max-height: 80%; overflow-y: auto; border-radius: 10px; padding: 20px; color: #333;">
-    <h3>客户信息登记/更新</h3>
-    <form id="recordFormFix">
-      <label>员工姓名：</label><input type="text" id="employee_name_fix" required><br><br>
-      <label>客户姓名：</label><input type="text" id="customer_name_fix" required><br><br>
-      <label>📱 客户手机号（唯一标识）：</label><input type="tel" id="customer_phone_fix" required><br><br>
-      <label>房屋地址：</label><textarea id="address_fix" rows="2" required></textarea><br><br>
-      
-      <label>使用的系统：</label>
-      <select id="system_used_fix">
-        <option value="房屋健康系统">房屋健康系统</option>
-        <option value="定价系统">定价系统</option>
-        <option value="产品系统">产品系统</option>
-        <option value="Home-Master">Home-Master</option>
-      </select><br><br>
-      
-      <div id="dynamicFieldsFix"></div>
-      
-      <label>客户意向等级：</label>
-      <select id="intent_level_fix">
-        <option value="">-- 不更新 --</option>
-        <option value="高">高</option>
-        <option value="中">中</option>
-        <option value="低">低</option>
-        <option value="已签约">已签约</option>
-      </select><br><br>
-      
-      <label>跟进备注：</label><textarea id="remark_fix" rows="2"></textarea><br><br>
-      
-      <label>跟进状态：</label>
-      <select id="followup_status_fix">
-        <option value="">-- 不更新 --</option>
-        <option value="待跟进">待跟进</option>
-        <option value="已报价">已报价</option>
-        <option value="已签约">已签约</option>
-        <option value="已放弃">已放弃</option>
-      </select><br><br>
-      
-      <button type="submit">提交</button>
-      <button type="button" id="closeModalBtnFix">取消</button>
-    </form>
-  </div>
-</div>
+    <div id="recordModalFix" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+        <div style="background: white; width: 90%; max-width: 500px; max-height: 80%; overflow-y: auto; border-radius: 10px; padding: 20px; color: #333;">
+            <h3>客户信息登记/更新</h3>
+            <form id="recordFormFix">
+                <label>员工姓名：</label><input type="text" id="employee_name_fix" required><br><br>
+                <label>客户姓名：</label><input type="text" id="customer_name_fix" required><br><br>
+                <label>📱 客户手机号（唯一标识）：</label><input type="tel" id="customer_phone_fix" required><br><br>
+                <label>房屋地址：</label><textarea id="address_fix" rows="2" required></textarea><br><br>
+                
+                <label>使用的系统：</label>
+                <select id="system_used_fix">
+                    <option value="房屋健康系统" selected>房屋健康系统</option>
+                    <option value="定价系统">定价系统</option>
+                    <option value="产品系统">产品系统</option>
+                    <option value="Home-Master">Home-Master</option>
+                </select><br><br>
+                
+                <div id="dynamicFieldsFix"></div>
+                
+                <label>客户意向等级：</label>
+                <select id="intent_level_fix">
+                    <option value="">-- 不更新 --</option>
+                    <option value="高">高</option>
+                    <option value="中">中</option>
+                    <option value="低">低</option>
+                    <option value="已签约">已签约</option>
+                </select><br><br>
+                
+                <label>跟进备注：</label><textarea id="remark_fix" rows="2"></textarea><br><br>
+                
+                <label>跟进状态：</label>
+                <select id="followup_status_fix">
+                    <option value="">-- 不更新 --</option>
+                    <option value="待跟进">待跟进</option>
+                    <option value="已报价">已报价</option>
+                    <option value="已签约">已签约</option>
+                    <option value="已放弃">已放弃</option>
+                </select><br><br>
+                
+                <button type="submit">提交</button>
+                <button type="button" id="closeModalBtnFix">取消</button>
+            </form>
+        </div>
+    </div>
 
-<script>
-(function() {
-  const modal = document.getElementById('recordModalFix');
-  const openBtn = document.getElementById('openFormBtnFix');
-  const closeBtn = document.getElementById('closeModalBtnFix');
-  const form = document.getElementById('recordFormFix');
-  const systemSelect = document.getElementById('system_used_fix');
-  const dynamicFieldsDiv = document.getElementById('dynamicFieldsFix');
+    <script>
+    (function() {
+        const modal = document.getElementById('recordModalFix');
+        const openBtn = document.getElementById('openFormBtnFix');
+        const closeBtn = document.getElementById('closeModalBtnFix');
+        const form = document.getElementById('recordFormFix');
+        const systemSelect = document.getElementById('system_used_fix');
+        const dynamicFieldsDiv = document.getElementById('dynamicFieldsFix');
 
-  if (!openBtn || !modal) return;
+        if (!openBtn || !modal) return;
 
-  openBtn.onclick = () => { modal.style.display = 'flex'; };
-  closeBtn.onclick = () => { modal.style.display = 'none'; };
-  window.onclick = (event) => { if (event.target === modal) modal.style.display = 'none'; };
+        // 自动填充函数（每次打开弹窗时调用）
+        function autoFillForm() {
+            // 1. 客户基础信息（从页面新加的输入框获取）
+            const custName = document.getElementById('custName')?.value || '';
+            const custPhone = document.getElementById('custPhone')?.value || '';
+            const custAddr = document.getElementById('custAddr')?.value || '';
+            document.getElementById('customer_name_fix').value = custName;
+            document.getElementById('customer_phone_fix').value = custPhone;
+            document.getElementById('address_fix').value = custAddr;
 
-  function updateDynamicFields() {
-    const system = systemSelect.value;
-    let html = '';
-    if (system === '房屋健康系统') {
-      html = `
-        <label>房屋健康评分/等级：</label><input type="text" id="house_health_score_fix"><br><br>
-        <label>健康检测关键指标：</label><textarea id="health_indicators_fix" rows="2"></textarea><br><br>
-      `;
-    } else if (system === '定价系统') {
-      html = `
-        <label>报价方案编号/名称：</label><input type="text" id="quotation_name_fix"><br><br>
-        <label>报价总金额（元）：</label><input type="number" id="quotation_amount_fix"><br><br>
-      `;
-    } else if (system === '产品系统') {
-      html = `
-        <label>所选产品清单：</label><textarea id="product_list_fix" rows="2"></textarea><br><br>
-        <label>产品总金额（元）：</label><input type="number" id="product_amount_fix"><br><br>
-      `;
-    } else if (system === 'Home-Master') {
-      html = `
-        <label>Home-Master 汇总结论：</label><textarea id="home_master_summary_fix" rows="2"></textarea><br><br>
-      `;
-    }
-    dynamicFieldsDiv.innerHTML = html;
-  }
-  systemSelect.addEventListener('change', updateDynamicFields);
-  updateDynamicFields();
+            // 2. 房屋健康评分&等级 & 关键指标
+            const scores = typeof getHealthScores === 'function' ? getHealthScores() : { total:0, levelText:'未知' };
+            const totalScore = scores.total;
+            const levelText = scores.levelText;
+            // 关键指标：可汇总主要问题或总分+等级
+            let indicators = `总分:${totalScore}分，${levelText}`;
+            // 可额外加入一些重点扣分项摘要
+            if (scores.surfaceTotal < 12) indicators += `；饰面扣分较多`;
+            if (scores.doorWinTotal < 15) indicators += `；门窗/材料较差`;
+            if (scores.painTotal < 25) indicators += `；居住痛点较多`;
+            // 填充到房屋健康系统专用字段
+            const scoreField = document.getElementById('house_health_score_fix');
+            const indicatorField = document.getElementById('health_indicators_fix');
+            if (scoreField) scoreField.value = `${totalScore}分 (${levelText})`;
+            if (indicatorField) indicatorField.value = indicators;
+        }
 
-  form.onsubmit = async (e) => {
-    e.preventDefault();
-    
-    const payload = {
-      employee_name: document.getElementById('employee_name_fix').value,
-      customer_name: document.getElementById('customer_name_fix').value,
-      customer_phone: document.getElementById('customer_phone_fix').value,
-      address: document.getElementById('address_fix').value,
-      system_used: systemSelect.value,
-      house_health_score: document.getElementById('house_health_score_fix')?.value || '',
-      health_indicators: document.getElementById('health_indicators_fix')?.value || '',
-      quotation_name: document.getElementById('quotation_name_fix')?.value || '',
-      quotation_amount: document.getElementById('quotation_amount_fix')?.value || '',
-      product_list: document.getElementById('product_list_fix')?.value || '',
-      product_amount: document.getElementById('product_amount_fix')?.value || '',
-      home_master_summary: document.getElementById('home_master_summary_fix')?.value || '',
-      intent_level: document.getElementById('intent_level_fix').value,
-      remark: document.getElementById('remark_fix').value,
-      followup_status: document.getElementById('followup_status_fix').value
-    };
-    
-    // 请替换成你自己的 Google Apps Script URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwyRgdHugsLqcBDNXjaQvQKAdDq2wugPTUuTav1_75Crb2jJK-NGg6aHcOTGFUKFRwo/exec';
-    
-    try {
-      const response = await fetch(webAppUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(payload)
-      });
-      const result = await response.json();
-      if (result.result === 'new') {
-        alert('新客户登记成功！');
-      } else if (result.result === 'updated') {
-        alert('客户信息已更新！');
-      } else {
-        alert('操作失败，请重试。');
-      }
-      modal.style.display = 'none';
-      form.reset();
-    } catch (err) {
-      alert('网络错误：' + err.message);
-    }
-  };
-})();
-</script>
-<!-- ========== 登记模块结束 ========== -->
-    
+        openBtn.onclick = () => {
+            autoFillForm();   // 打开弹窗前自动填充
+            modal.style.display = 'flex';
+        };
+        closeBtn.onclick = () => { modal.style.display = 'none'; };
+        window.onclick = (event) => { if (event.target === modal) modal.style.display = 'none'; };
+
+        function updateDynamicFields() {
+            const system = systemSelect.value;
+            let html = '';
+            if (system === '房屋健康系统') {
+                html = `
+                    <label>房屋健康评分/等级：</label><input type="text" id="house_health_score_fix"><br><br>
+                    <label>健康检测关键指标：</label><textarea id="health_indicators_fix" rows="2"></textarea><br><br>
+                `;
+            } else if (system === '定价系统') {
+                html = `
+                    <label>报价方案编号/名称：</label><input type="text" id="quotation_name_fix"><br><br>
+                    <label>报价总金额（元）：</label><input type="number" id="quotation_amount_fix"><br><br>
+                `;
+            } else if (system === '产品系统') {
+                html = `
+                    <label>所选产品清单：</label><textarea id="product_list_fix" rows="2"></textarea><br><br>
+                    <label>产品总金额（元）：</label><input type="number" id="product_amount_fix"><br><br>
+                `;
+            } else if (system === 'Home-Master') {
+                html = `
+                    <label>Home-Master 汇总结论：</label><textarea id="home_master_summary_fix" rows="2"></textarea><br><br>
+                `;
+            }
+            dynamicFieldsDiv.innerHTML = html;
+        }
+        systemSelect.addEventListener('change', updateDynamicFields);
+        updateDynamicFields();
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const getVal = (id) => document.getElementById(id)?.value || '';
+            const payload = {
+                employee_name: getVal('employee_name_fix'),
+                customer_name: getVal('customer_name_fix'),
+                customer_phone: getVal('customer_phone_fix'),
+                address: getVal('address_fix'),
+                system_used: systemSelect.value,
+                house_health_score: getVal('house_health_score_fix'),
+                health_indicators: getVal('health_indicators_fix'),
+                quotation_name: getVal('quotation_name_fix'),
+                quotation_amount: getVal('quotation_amount_fix'),
+                product_list: getVal('product_list_fix'),
+                product_amount: getVal('product_amount_fix'),
+                home_master_summary: getVal('home_master_summary_fix'),
+                intent_level: getVal('intent_level_fix'),
+                remark: getVal('remark_fix'),
+                followup_status: getVal('followup_status_fix')
+            };
+            
+            if (!payload.customer_phone) {
+                alert('请填写客户手机号');
+                return;
+            }
+            
+            // 请确保这个 URL 是你正确的 Google Apps Script 地址
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbwyRgdHugsLqcBDNXjaQvQKAdDq2wugPTUuTav1_75Crb2jJK-NGg6aHcOTGFUKFRwo/exec';
+            
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(payload)
+                });
+                const result = await response.json();
+                if (result.result === 'new') {
+                    alert('新客户登记成功！');
+                } else if (result.result === 'updated') {
+                    alert('客户信息已更新！');
+                } else {
+                    alert('操作失败：' + JSON.stringify(result));
+                }
+                modal.style.display = 'none';
+                form.reset();
+            } catch (err) {
+                alert('网络错误：' + err.message);
+            }
+        };
+    })();
+    </script>
+    <!-- ========== 登记模块结束 ========== -->
+
 </body>
 </html>
